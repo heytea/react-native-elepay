@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
 
-const { ReactNativeElepay } = NativeModules;
+const { Elepay } = NativeModules;
 
-export default ReactNativeElepay;
+export default Elepay;
