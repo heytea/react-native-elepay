@@ -32,9 +32,11 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         val pKey = if (configs.hasKey("publicKey")) {
             try { configs.getString("publicKey") ?: "" } catch (e: Exception) { "" }
         } else ""
+
         val apiUrl = if (configs.hasKey("apiUrl")) {
             try { configs.getString("apiUrl") ?: "" } catch (e: Exception) { "" }
         } else ""
+
         val googlePayEnv = if (configs.hasKey("googlePayEnvironment")) {
             try {
                 configs.getString("googlePayEnvironment")?.let {
@@ -45,11 +47,18 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
                 null
             }
         } else null
+
         val languageKeyStr = if (configs.hasKey("languageKey")) {
             try { configs.getString("languageKey") ?: "" } catch (e: Exception) { "" }
         } else ""
         val languageKey = retrieveLanguageKey(languageKeyStr)
-        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv, languageKey))
+
+        val themeName = if (configs.hasKey("theme")) {
+            try { configs.getString("theme") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val theme = retrieveTheme(themeName)
+
+        Elepay.setup(ElepayConfiguration(pKey, apiUrl, googlePayEnv, languageKey, theme))
     }
 
     @ReactMethod
@@ -59,6 +68,15 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
         } else ""
         val languageKey = retrieveLanguageKey(languageKeyStr)
         Elepay.changeLanguageKey(languageKey)
+    }
+
+    @ReactMethod
+    fun changeTheme(themeMap: ReadableMap) {
+        val themeName = if (themeMap.hasKey("theme")) {
+            try { themeMap.getString("theme") ?: "" } catch (e: Exception) { "" }
+        } else ""
+        val theme = retrieveTheme(themeName)
+        Elepay.changeTheme(theme)
     }
 
     @ReactMethod
@@ -96,6 +114,9 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
 
             is ElepayResult.Failed -> {
                 val rnElepayError = when (val error = result.error) {
+                    is ElepayError.SDKNotSetup ->
+                        RnElepayError(error.errorCode, "SDK not setup", error.message)
+
                     is ElepayError.UnsupportedPaymentMethod ->
                         RnElepayError("", "Unsupported payment method", error.paymentMethod)
 
@@ -137,5 +158,12 @@ class RnElepayModule(reactContext: ReactApplicationContext): ReactContextBaseJav
             "japanese" -> LanguageKey.Japanese
             "system" -> LanguageKey.System
             else -> LanguageKey.System
+        }
+
+    private fun retrieveTheme(themeName: String): ElepayTheme =
+        when(themeName.toLowerCase(Locale.ROOT)) {
+            "light" -> ElepayTheme.Light
+            "dark" -> ElepayTheme.Dark
+            else -> ElepayTheme.System
         }
 }
