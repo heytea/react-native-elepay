@@ -1,4 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.heytea.elepay">
-
+    <application>
+        <activity
+            android:name="jp.elestyle.androidapp.elepay.activity.ElepayCallbackActivity"
+            android:exported="true">
+            <intent-filter>
+                <data android:scheme="ep065f4190ea4473e80713d36" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
