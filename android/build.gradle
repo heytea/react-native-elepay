@@ -61,7 +61,7 @@ def kotlin_version = safeExtGet('kotlinVersion','1.3.41')
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'jp.elestyle.androidapp:elepay:2.1.1'
+    api 'jp.elestyle.androidapp:elepay:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
